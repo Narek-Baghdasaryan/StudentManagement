@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Controller
-public class StudentController {
+public class TeacherController {
 
     @Value("${picture.upload.directory}")
     private String uploadDirectory;
@@ -29,68 +29,71 @@ public class StudentController {
     @Autowired
     private LessonRepository lessonRepository;
 
-    @GetMapping("/students")
-    public String StudentsPage(ModelMap modelMap) {
-        modelMap.addAttribute("students", userRepository.findByUserType(UserType.STUDENT));
-        return "students";
+    @GetMapping("/teachers")
+    public String TeacherPage(ModelMap modelMap) {
+        modelMap.addAttribute("teachers", userRepository.findByUserType(UserType.TEACHER));
+        return "teachers";
     }
 
-    @GetMapping("/students/add")
-    public String addStudentsPage(ModelMap modelMap) {
+    @GetMapping("/teachers/add")
+    public String addTeachersPage(ModelMap modelMap) {
         modelMap.addAttribute("lessons", lessonRepository.findAll());
-        return "addStudents";
+        return "addTeacher";
     }
 
-    @PostMapping("/students/add")
-    public String addStudent(@ModelAttribute User user,
+    @PostMapping("/teachers/add")
+    public String addTeacher(@ModelAttribute User user,
                              @RequestParam("picture") MultipartFile multipartFile) throws IOException {
         if (multipartFile != null && !multipartFile.isEmpty()) {
             String picName = System.currentTimeMillis() + "_" + multipartFile.getOriginalFilename();
             File file = new File(uploadDirectory, picName);
             multipartFile.transferTo(file);
             user.setPicName(picName);
+            user.getLesson().setTeacher(user);
             userRepository.save(user);
-
         }
-        return "redirect:/students";
+        return "redirect:/teachers";
     }
 
-    @GetMapping("/students/delete/{id}")
+    @GetMapping("/teachers/delete/{id}")
     public String deleteStudent(@PathVariable("id") int id) {
         userRepository.deleteById(id);
-        return "redirect:/students";
+        return "redirect:/teachers";
     }
-    @GetMapping("/students/update/{id}")
-    public String updateStudentPage(@PathVariable("id") int id, ModelMap modelMap) {
+
+    @GetMapping("/teachers/update/{id}")
+    public String updateTeacherPage(@PathVariable("id") int id, ModelMap modelMap) {
         Optional<User> byId = userRepository.findById(id);
         if (byId.isPresent()) {
             modelMap.addAttribute("user", byId.get());
             modelMap.addAttribute("lessons", lessonRepository.findAll());
         } else {
-            return "redirect:/students";
+            return "redirect:/teachers";
         }
-        return "updateStudent";
+        return "updateTeacher";
     }
-    @PostMapping("/students/update")
-    public String updateStudent(@ModelAttribute User user,
+
+    @PostMapping("/teachers/update")
+    public String updateTeacher(@ModelAttribute User user,
                                 @RequestParam("picture") MultipartFile multipartFile) throws IOException {
         if (multipartFile != null && !multipartFile.isEmpty()) {
             String picName = System.currentTimeMillis() + "_" + multipartFile.getOriginalFilename();
             File file = new File(uploadDirectory, picName);
             multipartFile.transferTo(file);
             user.setPicName(picName);
-        }else {
+        } else {
             Optional<User> fromDB = userRepository.findById(user.getId());
             user.setPicName(fromDB.get().getPicName());
         }
         userRepository.save(user);
-        return "redirect:/students";
+        return "redirect:/teachers";
     }
-    @GetMapping("/students/image/delete")
-    public String deleteStudentsImage(@RequestParam("id") int id) {
+
+    @GetMapping("/teacher/image/delete")
+    public String deleteTeacherImage(@RequestParam("id") int id) {
         Optional<User> byId = userRepository.findById(id);
         if (byId.isEmpty()) {
-            return "redirect:/students";
+            return "redirect:/teachers";
         } else {
             User user = byId.get();
             String picName = user.getPicName();
@@ -102,7 +105,7 @@ public class StudentController {
                     file.delete();
                 }
             }
-            return "redirect:/students/update/" + user.getId();
+            return "redirect:/teachers/update/" + user.getId();
         }
     }
 }
