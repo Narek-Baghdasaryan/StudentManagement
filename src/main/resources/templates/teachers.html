@@ -5,7 +5,8 @@
     <title>Teachers</title>
 </head>
 <body>
-Add Teacher | <a href="/teachers/add">Add</a>
+<th:block th:include="/fragment/headerFragment::userInfo"></th:block><br>
+Add Teacher | <a th:if="${currentUser != null && currentUser.userRole.name() == 'TEACHER'}" href="/teachers/add">add</a>
 <table border="2px">
     <thead>
     <tr>

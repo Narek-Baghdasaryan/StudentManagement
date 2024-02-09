@@ -32,4 +32,9 @@ public class MainController {
         return null;
     }
 
+    @GetMapping("/loginPage")
+    public String loginPage(){
+        return "loginPage";
+    }
+
 }

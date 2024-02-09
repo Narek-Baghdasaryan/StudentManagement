@@ -5,8 +5,11 @@ import com.example.studentmanagement.entity.User;
 import com.example.studentmanagement.enums.UserType;
 import com.example.studentmanagement.repository.LessonRepository;
 import com.example.studentmanagement.repository.UserRepository;
+import com.example.studentmanagement.security.SpringUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -25,22 +28,29 @@ public class StudentController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private LessonRepository lessonRepository;
 
     @GetMapping("/students")
-    public String StudentsPage(ModelMap modelMap) {
+    public String StudentsPage(ModelMap modelMap, @AuthenticationPrincipal SpringUser springUser) {
+        if(springUser != null){
+            modelMap.addAttribute("user", springUser.getUser());
+        }
         modelMap.addAttribute("students", userRepository.findByUserType(UserType.STUDENT));
         return "students";
     }
 
     @GetMapping("/students/add")
-    public String addStudentsPage(ModelMap modelMap) {
+    public String addStudentsPage(@RequestParam(value = "msg", required = false) String msg, ModelMap modelMap) {
+        if (msg != null){
+            modelMap.addAttribute("msg", msg);
+        }
         modelMap.addAttribute("lessons", lessonRepository.findAll());
         return "addStudents";
     }
-
     @PostMapping("/students/add")
     public String addStudent(@ModelAttribute User user,
                              @RequestParam("picture") MultipartFile multipartFile) throws IOException {
@@ -49,10 +59,16 @@ public class StudentController {
             File file = new File(uploadDirectory, picName);
             multipartFile.transferTo(file);
             user.setPicName(picName);
-            userRepository.save(user);
 
         }
-        return "redirect:/students";
+        Optional<User> byEmail = userRepository.findByEmail(user.getEmail());
+        if (byEmail.isEmpty()){
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepository.save(user);
+            return "redirect:/students/add?msg=Student Registered";
+        }else {
+            return "redirect:/students/add?msg=email already is use";
+        }
     }
 
     @GetMapping("/students/delete/{id}")

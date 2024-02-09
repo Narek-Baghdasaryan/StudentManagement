@@ -5,7 +5,8 @@
     <title>lessons</title>
 </head>
 <body>
-Add lesson | <a href="/lessons/add">add</a>
+<th:block th:include="/fragment/headerFragment::userInfo"></th:block><br>
+Add lesson | <a th:if="${currentUser != null && currentUser.userRole.name() == 'TEACHER'}" href="/lessons/add">add</a>
 <table border="2px">
     <thead>
     <tr>
@@ -14,6 +15,7 @@ Add lesson | <a href="/lessons/add">add</a>
         <th>duration</th>
         <th>price</th>
         <th>start date</th>
+        <th>user Name</th>
         <th>update</th>
         <th>delete</th>
 
@@ -26,6 +28,9 @@ Add lesson | <a href="/lessons/add">add</a>
         <td th:text="${lesson.duration}"></td>
         <td th:text="${lesson.price}"></td>
         <td th:text="${lesson.startDate}"></td>
+        <td>
+            <span th:if="${lesson.teacher != null}" th:text="${lesson.teacher.name}"></span>
+        </td>
         <td><a th:href="@{'/lessons/update/'+ ${lesson.id}}">update</a></td>
         <td><a th:href="@{'/lessons/delete/'+ ${lesson.id}}">delete</a></td>
     </tr>

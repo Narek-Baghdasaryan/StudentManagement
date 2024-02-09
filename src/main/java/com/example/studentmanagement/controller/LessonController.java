@@ -3,7 +3,9 @@ package com.example.studentmanagement.controller;
 
 import com.example.studentmanagement.entity.Lesson;
 import com.example.studentmanagement.repository.LessonRepository;
+import com.example.studentmanagement.security.SpringUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +29,8 @@ public class LessonController {
     }
 
     @PostMapping("/lessons/add")
-    public String addLesson(@ModelAttribute Lesson lesson) {
+    public String addLesson(@ModelAttribute Lesson lesson, @AuthenticationPrincipal SpringUser springUser) {
+        lesson.setTeacher(springUser.getUser());
         lessonRepository.save(lesson);
         return "redirect:/lessons";
     }

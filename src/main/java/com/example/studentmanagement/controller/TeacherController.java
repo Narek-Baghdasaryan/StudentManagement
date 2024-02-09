@@ -7,6 +7,7 @@ import com.example.studentmanagement.repository.LessonRepository;
 import com.example.studentmanagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,8 @@ public class TeacherController {
 
     @Value("${picture.upload.directory}")
     private String uploadDirectory;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     @Autowired
@@ -52,7 +55,14 @@ public class TeacherController {
             user.getLesson().setTeacher(user);
             userRepository.save(user);
         }
-        return "redirect:/teachers";
+        Optional<User> byEmail = userRepository.findByEmail(user.getEmail());
+        if (byEmail.isEmpty()){
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepository.save(user);
+            return "redirect:/teachers/add?msg=Teacher Registered";
+        }else {
+            return "redirect:/teachers/add?msg=email already is use";
+        }
     }
 
     @GetMapping("/teachers/delete/{id}")
