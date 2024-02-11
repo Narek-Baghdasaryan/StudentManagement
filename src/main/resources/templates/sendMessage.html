@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Send message</title>
+</head>
+<body>
+<th:block th:include="/fragment/headerFragment::userInfo"/>
+<form action="/sendMessage/forward" method="post">
+    <input type="hidden" th:value="${toId}" name="to">
+    <input type="hidden" th:value="${currentUser.getId()}" name="from">
+    <input type="hidden" th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}" name="dateTime">
+    <input type="text"  name="Message">
+    <input type="submit" value="send">
+</form>
+</body>
+</html>

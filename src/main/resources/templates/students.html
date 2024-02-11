@@ -6,7 +6,7 @@
 </head>
 <body>
 <th:block th:include="/fragment/headerFragment::userInfo"></th:block><br>
-Students | <a th:if="${currentUser != null && currentUser.userRole.name() == 'TEACHER'}" href="/students/add">add</a>
+Students | <a th:if="${currentUser != null && currentUser.userType.name() == 'TEACHER'}" href="/students/add">add</a>
 <table border="2px">
     <thead>
     <tr>
@@ -16,6 +16,7 @@ Students | <a th:if="${currentUser != null && currentUser.userRole.name() == 'TE
         <th>surname</th>
         <th>email</th>
         <th>lesson</th>
+        <th>message</th>
         <th>update</th>
         <th>Delete</th>
 
@@ -32,9 +33,12 @@ Students | <a th:if="${currentUser != null && currentUser.userRole.name() == 'TE
         <td th:text="${student.surname}"></td>
         <td th:text="${student.email}"></td>
         <td th:if="${student.lesson != null}" th:text="${student.lesson.title}"></td>
+        <td><a th:if="${ currentUser != null && currentUser.userType.name() == 'STUDENT'}"
+               th:href="@{'/sendMessage/'+ ${student.id}}">message</a>
+        </td>
+        <td><a th:if="${currentUser.userType.name() == 'TEACHER'}" th:href="@{'/students/update/'+ ${student.id}}">Update</a></td>
+        <td><a th:if="${currentUser.userType.name() == 'TEACHER'}" th:href="@{'/students/delete/' + ${student.id}}">Delete</a></td>
 
-        <td><a th:href="@{'/students/update/'+ ${student.id}}">Update</a></td>
-        <td><a th:href="@{'/students/delete/' + ${student.id}}">Delete</a></td>
     </tr>
     </tbody>
 </table>

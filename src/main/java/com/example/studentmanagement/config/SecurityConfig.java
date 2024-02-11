@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/");
         return httpSecurity.build();
     }
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();

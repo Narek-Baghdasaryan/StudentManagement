@@ -16,7 +16,7 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String massage;
+    private String message;
 
     @ManyToOne
     private User from;

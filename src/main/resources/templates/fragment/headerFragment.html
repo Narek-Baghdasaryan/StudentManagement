@@ -9,8 +9,12 @@
 <div th:fragment="userInfo">
 
 <div th:if="${currentUser != null}">
-    Welcome <span th:text="${curentUser.name}"></span> | <a href="/logout">Logout</a>
+    Welcome <span th:text="${currentUser.name}"></span> | <a href="/logout">Logout</a>
 </div>
+    <form action="/messages">
+        <input type="hidden" th:value="${currentUser.getId()}" name="id">
+        <input type="submit" value="message">
+    </form>
 </div>
 
 </body>

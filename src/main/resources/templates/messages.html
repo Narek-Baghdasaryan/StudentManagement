@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Massages</title>
+</head>
+<body>
+<th:block th:include="/fragment/headerFragment::userInfo"/>
+<table>
+    <thead>
+    <tr>
+        <th>Messages</th>
+        <th>Date</th>
+        <th>From</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="message:${messages}">
+        <td th:text="${message.message}"></td>
+        <td th:text="${message.dateTime}"></td>
+        <td th:text="${message.from.name}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
